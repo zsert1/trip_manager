@@ -46,8 +46,6 @@ uvicorn app.main:app --reload
 
 ## 1. 사용자 회원가입 (Signup)
 
-## 1. 사용자 회원가입 (Signup)
-
 - **URL**: `/signup`
 - **Method**: `POST`
 - **Headers**:
@@ -58,14 +56,21 @@ uvicorn app.main:app --reload
     "email": "user@example.com",
     "password": "your_password"
   }
-  {
-  "msg": "회원가입이 완료되었습니다. 이메일을 확인해 주세요."
-  }
-  # 400 Bad Request: 이메일이 이미 등록된 경우
-  {
-  "detail": "Email already registered"
-  }
   ```
+- **Response**:
+
+  - **`200 OK`**:
+    ```json
+    {
+      "msg": "회원가입이 완료되었습니다. 이메일을 확인해 주세요."
+    }
+    ```
+  - **`400 Bad Request`**
+    ```json
+    {
+      "detail": "Email already registered"
+    }
+    ```
 
 ---
 
@@ -127,11 +132,11 @@ uvicorn app.main:app --reload
     }
     ```
 
-- **설명**: 이메일 인증에 실패했거나, 인증 이메일을 받지 못한 사용자가 이메일 재전송을 요청합니다. 재전송된 이메일에는 새로운 인증 토큰이 포함됩니다.
+- **설명**: 이메일 인증에 실패했거나, 인증 이메일을 받지 못한 사용자가 이메일 재전송을 요청. 재전송된 이메일에는 새로운 인증 토큰이 포함.
 
 ---
 
-## 3. 사용자 로그인 (Get Access Token)
+## 4. 사용자 로그인 (Get Access Token)
 
 - **URL**: `/token`
 - **Method**: `POST`
@@ -158,7 +163,7 @@ uvicorn app.main:app --reload
 
 ---
 
-## 4. 사용자 정보 가져오기 (Get User Info)
+## 5. 사용자 정보 가져오기 (Get User Info)
 
 - **URL**: `/users/me`
 - **Method**: `GET`
@@ -188,7 +193,7 @@ uvicorn app.main:app --reload
 
 ---
 
-## 5. SSO 로그인 요청 (SSO Login)
+## 6. SSO 로그인 요청 (SSO Login)
 
 - **URL**: `/auth/{provider}/login`
 - **Method**: `GET`
@@ -205,7 +210,7 @@ uvicorn app.main:app --reload
 
 ---
 
-## 6. SSO 인증 후 콜백 (SSO Callback)
+## 7. SSO 인증 후 콜백 (SSO Callback)
 
 - **URL**: `/auth/{provider}/callback`
 - **Method**: `GET`
@@ -247,7 +252,7 @@ uvicorn app.main:app --reload
 
 ---
 
-## 7. 기본 라우트 (Root)
+## 8. 기본 라우트 (Root)
 
 - **URL**: `/`
 - **Method**: `GET`
