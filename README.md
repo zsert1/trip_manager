@@ -22,13 +22,16 @@ source venv/bin/activate  # Windows는 venv\Scripts\activate
 
 ```
 # FastAPI 및 필수 라이브러리 설치
-pip install fastapi uvicorn sqlalchemy mysql-connector-python python-dotenv
+pip install fastapi uvicorn sqlalchemy mysql-connector-python python-dotenv pydantic pymysql fastapi-mail python-jose[cryptography] fastapi-mail passlib
 
 # OAuth와 SSO를 위한 라이브러리 설치
 pip install authlib httpx
 
 # 비밀번호 해시화를 위한 라이브러리 설치
 pip install passlib[bcrypt]
+
+
+
 ```
 
 ### 1.3. FastAPI 서버 실행
@@ -43,6 +46,8 @@ uvicorn app.main:app --reload
 
 ## 1. 사용자 회원가입 (Signup)
 
+## 1. 사용자 회원가입 (Signup)
+
 - **URL**: `/signup`
 - **Method**: `POST`
 - **Headers**:
@@ -50,16 +55,83 @@ uvicorn app.main:app --reload
 - **Request Body**:
   ```json
   {
-    "email": "string", // 사용자 이메일
-    "password": "string" // 사용자 비밀번호
+    "email": "user@example.com",
+    "password": "your_password"
+  }
+  {
+  "msg": "회원가입이 완료되었습니다. 이메일을 확인해 주세요."
+  }
+  # 400 Bad Request: 이메일이 이미 등록된 경우
+  {
+  "detail": "Email already registered"
   }
   ```
 
-나머지 API 명세서 예시는 텍스트로 제공하겠습니다.
+---
+
+## 2. 이메일 인증 확인 (Verify Email)
+
+- **URL**: `/verify-email`
+- **Method**: `GET`
+- **Headers**:
+  - `Content-Type`: `application/json`
+- **Query Parameters**:
+
+  - `token`: 이메일로 발송된 인증 토큰
+
+- **Response**:
+
+  - **`200 OK`**:
+    ```json
+    {
+      "msg": "이메일 인증이 완료되었습니다."
+    }
+    ```
+  - **`400 Bad Request`**: 잘못된 인증 토큰이거나, 사용자가 존재하지 않는 경우
+    ```json
+    {
+      "detail": "User not found"
+    }
+    ```
+
+- **설명**: 이메일 인증 토큰을 확인하고, 인증에 성공하면 사용자의 활성화 상태를 업데이트.
 
 ---
 
-## 2. 사용자 로그인 (Get Access Token)
+## 3. 이메일 재전송 요청 (Resend Verification)
+
+- **URL**: `/resend-verification`
+- **Method**: `POST`
+- **Headers**:
+  - `Content-Type`: `application/json`
+- **Request Body**:
+
+  ```json
+  {
+    "email": "user@example.com"
+  }
+  ```
+
+- **Response**:
+
+  - **`200 OK`**:
+    ```json
+    {
+      "msg": "인증 이메일이 재전송되었습니다."
+    }
+    ```
+  - **`400 Bad Request`**: 잘못된 인증 토큰이거나, 사용자가 존재하지 않는 경우
+    ```json
+    {
+      "detail": "User not found"
+    }
+    ```
+
+- **설명**: 이메일 인증에 실패했거나, 인증 이메일을 받지 못한 사용자가 이메일 재전송을 요청합니다. 재전송된 이메일에는 새로운 인증 토큰이 포함됩니다.
+
+---
+
+## 3. 사용자 로그인 (Get Access Token)
 
 - **URL**: `/token`
 - **Method**: `POST`
@@ -86,7 +158,7 @@ uvicorn app.main:app --reload
 
 ---
 
-## 3. 사용자 정보 가져오기 (Get User Info)
+## 4. 사용자 정보 가져오기 (Get User Info)
 
 - **URL**: `/users/me`
 - **Method**: `GET`
@@ -116,7 +188,7 @@ uvicorn app.main:app --reload
 
 ---
 
-## 4. SSO 로그인 요청 (SSO Login)
+## 5. SSO 로그인 요청 (SSO Login)
 
 - **URL**: `/auth/{provider}/login`
 - **Method**: `GET`
@@ -133,7 +205,7 @@ uvicorn app.main:app --reload
 
 ---
 
-## 5. SSO 인증 후 콜백 (SSO Callback)
+## 6. SSO 인증 후 콜백 (SSO Callback)
 
 - **URL**: `/auth/{provider}/callback`
 - **Method**: `GET`
@@ -175,7 +247,7 @@ uvicorn app.main:app --reload
 
 ---
 
-## 6. 기본 라우트 (Root)
+## 7. 기본 라우트 (Root)
 
 - **URL**: `/`
 - **Method**: `GET`
